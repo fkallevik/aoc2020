@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -24,19 +26,24 @@ func ArrayToString(a []int, delim string) string {
 	return strings.Trim(strings.Replace(fmt.Sprint(a), " ", delim, -1), "[]")
 }
 
+func getFunctionName(i interface{}) string {
+	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+}
+
 type day func()
 
 func open(fn day) {
 	start := time.Now()
 	fmt.Printf("************************************************\n")
-	fmt.Printf("Day 1 Answers:\n")
+	fmt.Printf("%s Answers:\n", getFunctionName(fn))
 	fmt.Printf("************************************************\n")
 	fn()
 	elapsed := time.Since(start)
-	fmt.Printf("Computation took %s\n", elapsed)
+	fmt.Printf("\nComputation took %s\n", elapsed)
 	fmt.Printf("************************************************\n")
 }
 
 func main() {
-	open(Day1)
+	//open(Day1)
+	open(Day2)
 }
