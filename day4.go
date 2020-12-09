@@ -20,13 +20,24 @@ type passport struct {
 
 var passports []passport
 
+func emptyPassport() passport {
+	return passport{
+		byr: "",
+		iyr: "",
+		eyr: "",
+		hgt: "",
+		hcl: "",
+		ecl: "",
+		pid: "",
+		cid: "",
+	}
+}
+
 func getRegisteredPassports(input []string) []passport {
 
 	isNewPassport := true
 
-	p := passport{
-		byr: "", iyr: "", eyr: "", hgt: "", hcl: "", ecl: "", pid: "", cid: "",
-	}
+	p := emptyPassport()
 
 	for i, line := range input {
 
@@ -42,9 +53,7 @@ func getRegisteredPassports(input []string) []passport {
 				passports = append(passports, p)
 			}
 
-			p = passport{
-				byr: "", iyr: "", eyr: "", hgt: "", hcl: "", ecl: "", pid: "", cid: "",
-			}
+			p = emptyPassport()
 		}
 
 		props := strings.Split(strings.Trim(line, " "), " ")
@@ -141,7 +150,7 @@ func invalidPassportID(s string) bool {
 	return !re.MatchString(s)
 }
 
-func validatePassports(passports []passport, part int) []passport {
+func validatePassports(passports []passport, strict bool) []passport {
 	var validated []passport
 
 	for _, p := range passports {
@@ -149,8 +158,28 @@ func validatePassports(passports []passport, part int) []passport {
 			continue
 		}
 
-		if part == 2 && (invalidYear(p.byr, 1920, 2002) || invalidYear(p.iyr, 2010, 2020) || invalidYear(p.eyr, 2020, 2030) || invalidHeight(p.hgt) || invalidHairColor(p.hcl) || invalidEyeColor(p.ecl) || invalidPassportID((p.pid))) {
-			continue
+		if strict {
+			if invalidYear(p.byr, 1920, 2002) {
+				continue
+			}
+			if invalidYear(p.iyr, 2010, 2020) {
+				continue
+			}
+			if invalidYear(p.eyr, 2020, 2030) {
+				continue
+			}
+			if invalidHeight(p.hgt) {
+				continue
+			}
+			if invalidHairColor(p.hcl) {
+				continue
+			}
+			if invalidEyeColor(p.ecl) {
+				continue
+			}
+			if invalidPassportID((p.pid)) {
+				continue
+			}
 		}
 
 		validated = append(validated, p)
@@ -164,8 +193,8 @@ func Day4() {
 
 	registeredPassports := getRegisteredPassports(input)
 
-	validPassportsPartOne := validatePassports(registeredPassports, 1)
-	validPassportsPartTwo := validatePassports(registeredPassports, 2)
+	validPassportsPartOne := validatePassports(registeredPassports, false)
+	validPassportsPartTwo := validatePassports(registeredPassports, true)
 
 	fmt.Printf("\nPart One - Valid Passports: %v\n", len(validPassportsPartOne))
 	fmt.Printf("\nPart Two - Valid Passports: %v\n", len(validPassportsPartTwo))
