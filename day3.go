@@ -8,15 +8,19 @@ import (
 const TREE = "#"
 const SPACE = "."
 
-func Day3() {
-	mapPattern := strings.Split(ReadFile("input/day3"), "\n")
+var mapPattern []string
 
+func init() {
+	mapPattern = strings.Split(ReadFile("input/day3"), "\n")
+}
+
+func calcTreesForSlope(right int, down int) int {
 	trees := 0
 
 	x := 0
 
-	for y := 1; y < len(mapPattern); y++ {
-		x += 3
+	for y := down; y < len(mapPattern); y += down {
+		x += right
 
 		row := mapPattern[y]
 		maxPosX := len(row) - 1
@@ -45,5 +49,24 @@ func Day3() {
 		fmt.Printf("%v\n", string(runes))
 	}
 
-	fmt.Printf("\nPart One Trees: %v\n", trees)
+	return trees
+}
+
+func Day3() {
+	slopes := [][]int{{1, 1}, {3, 1}, {5, 1}, {7, 1}, {1, 2}}
+
+	partOneTrees := 0
+	partTwoTrees := 1
+
+	for i, slope := range slopes {
+		t := calcTreesForSlope(slope[0], slope[1])
+		partTwoTrees *= t
+
+		if i == 1 {
+			partOneTrees = t
+		}
+	}
+
+	fmt.Printf("\nPart One - Trees Encountered: %v\n", partOneTrees)
+	fmt.Printf("\nPart Two - All Slope Trees Multiplied: %v\n", partTwoTrees)
 }
