@@ -48,5 +48,6 @@ func main() {
 	//open(Day2)
 	//open(Day3)
 	//open(Day4)
-	open(Day5)
+	//open(Day5)
+	open(Day6)
 }
